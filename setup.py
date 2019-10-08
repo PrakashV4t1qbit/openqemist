@@ -14,7 +14,7 @@
 
 import setuptools
 
-with open("README.md", "r") as readme:
+with open("docs/pypi_readme.md", "r") as readme:
     long_description = readme.read() # heh
 
 # This requires the a line of the module init to be something like:

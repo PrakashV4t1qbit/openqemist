@@ -21,4 +21,6 @@ help:
 	#@mv ../examples/dmet_microsoft_qsharp.rst .
 	#@jupyter nbconvert --ExecutePreprocessor.timeout=600 --execute --to rst ../examples/vqe_microsoft_qsharp.ipynb
 	#@mv ../examples/vqe_microsoft_qsharp.rst .
+	@jupyter nbconvert --ExecutePreprocessor.timeout=6000 --execute --to rst ../examples/dmet_multisolver.ipynb
+	@mv ../examples/dmet_multisolver.rst .
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)

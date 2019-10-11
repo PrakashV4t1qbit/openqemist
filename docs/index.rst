@@ -9,6 +9,7 @@ Welcome to the 1QBit OpenQEMIST documentation!
    refman/modules
    dmet_microsoft_qsharp
    vqe_microsoft_qsharp
+   dmet_multisolver
    release_notes
 
 

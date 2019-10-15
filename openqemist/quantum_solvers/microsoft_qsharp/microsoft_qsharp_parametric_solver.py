@@ -1,5 +1,5 @@
 #   Copyright 2019 1QBit
-#   
+#
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
 #   You may obtain a copy of the License at
@@ -17,13 +17,8 @@ from enum import Enum
 from ..parametric_quantum_solver import ParametricQuantumSolver
 
 import os
-import numpy as np
 
-# Import python packages for Microsoft Python interops
-import qsharp
-import qsharp.chemistry as qsharpchem
-# Import the "EstimateEnergy" Q# operation from the QDK Chemistry library
-estimate_energy = qsharp.QSharpCallable("Microsoft.Quantum.Chemistry.JordanWigner.VQE.EstimateEnergy", "")
+import numpy as np
 
 # Import pyscf and functions making use of it
 from pyscf import gto, scf
@@ -57,7 +52,13 @@ class MicrosoftQSharpParametricSolver(ParametricQuantumSolver):
             molecule (pyscf.gto.Mole): The molecule to simulate.
             mean_field (pyscf.scf.RHF): The mean field of the molecule.
         """
+        # Import python packages for Microsoft Python interops
+        import qsharp
+        import qsharp.chemistry as qsharpchem
+
         assert(isinstance(ansatz, MicrosoftQSharpParametricSolver.Ansatze))
+        self.ansatz = ansatz
+
         self.verbose = False
 
         # Initialize the number of samples to be used by the MicrosoftQSharp backend
@@ -75,9 +76,19 @@ class MicrosoftQSharpParametricSolver(ParametricQuantumSolver):
             mean_field.verbose = 0
             mean_field.scf()
 
+            if (mean_field.converged == False):
+                orb_temp = mean_field.mo_coeff
+                occ_temp = mean_field.mo_occ
+                nr = scf.newton(mean_field)
+                energy = nr.kernel(orb_temp, occ_temp)
+                mean_field = nr
+
         if not mean_field.converged:
             warnings.warn("MicrosoftQSharpParametricSolver simulating with mean field not converged.",
                     RuntimeWarning)
+
+        self.molecule = molecule
+        self.mean_field = mean_field
 
         self.n_orbitals = len(mean_field.mo_energy)
         self.n_spin_orbitals = 2 * self.n_orbitals
@@ -155,12 +166,16 @@ class MicrosoftQSharpParametricSolver(ParametricQuantumSolver):
         Returns:
             float64: The total energy (energy).
         """
+        import qsharp
+        import qsharp.chemistry as qsharpchem
+        # Import the "EstimateEnergy" Q# operation from the QDK Chemistry library
+        estimate_energy = qsharp.QSharpCallable("Microsoft.Quantum.Chemistry.JordanWigner.VQE.EstimateEnergy", "")
+
         # Test if right number of amplitudes have been passed
         if len(amplitudes) != self.amplitude_dimension:
             raise ValueError("Incorrect dimension for amplitude list.")
 
         amplitudes = list(amplitudes)
-
         self.jw_hamiltonian = self._set_amplitudes(amplitudes, self.jw_hamiltonian)
 
         # Compute energy
@@ -187,6 +202,8 @@ class MicrosoftQSharpParametricSolver(ParametricQuantumSolver):
         Returns:
             (numpy.array, numpy.array): One & two-particle RDMs (rdm1_np & rdm2_np, float64).
         """
+        import qsharp
+        import qsharp.chemistry as qsharpchem
 
         amplitudes = self.optimized_amplitudes
         one_rdm = np.zeros((self.n_orbitals, self.n_orbitals))
@@ -256,6 +273,20 @@ class MicrosoftQSharpParametricSolver(ParametricQuantumSolver):
 
         return (one_rdm, two_rdm)
 
+    def default_initial_var_parameters(self):
+        """ Returns initial variational parameters for a VQE simulation.
+
+        Returns initial variational parameters for the circuit that is generated
+        for a given ansatz.
+
+        Returns:
+            list: Initial parameters.
+        """
+        if self.ansatz == self.__class__.Ansatze.UCCSD:
+            from .._variational_parameters import mp2_variational_parameters
+            return mp2_variational_parameters(self.molecule, self.mean_field)
+        else:
+            raise RuntimeError("Unsupported ansatz for automatic parameter generation")
 
     def _set_amplitudes(self, amplitudes, jw_hamiltonian):
         """ Update variational parameters stored in the Q# JW data-structure """

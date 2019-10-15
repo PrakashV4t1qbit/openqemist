@@ -1,5 +1,5 @@
 #   Copyright 2019 1QBit
-#   
+#
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
 #   You may obtain a copy of the License at
@@ -28,9 +28,16 @@ ENV LD_PRELOAD=/usr/lib64/libopenblas.so
 
 # Python modules for documentation, Jupyter notebook support, visualization
 # and some computational packages
-RUN pip3 install 'ipython==7.4.0' jupyter 'pyscf==1.6' twine \
-    numpy 'scipy==1.2' matplotlib setuptools wheel sphinx py3Dmol \
-    sphinx_rtd_theme nbsphinx
+RUN pip3 install 'ipython==7.4.0' jupyter 'pyscf==1.6' numpy 'scipy==1.2' \ 
+    setuptools wheel sphinx py3Dmol sphinx_rtd_theme nbsphinx
+
+
+################### Google Openfermion environment ##############
+RUN pip3 install 'openfermion==0.9.0' openfermionprojectq
+
+
+################### IBM Qiskit environment ######################
+RUN pip3 install 'qiskit==0.11.0'
 
 
 ################### Microsoft QDK environment ###################

@@ -1,5 +1,5 @@
 #   Copyright 2019 1QBit
-#   
+#
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
 #   You may obtain a copy of the License at
@@ -66,5 +66,14 @@ class ParametricQuantumSolver(abc.ABC):
 
         Raises:
             RuntimeError: If no simulation has been run.
+        """
+        pass
+
+    @abc.abstractmethod
+    def default_initial_var_parameters(self):
+        """Returns reasonably good initial parameters for a VQE simulation.
+
+        The construction of the object should set the state so that this function
+        can produce its output.
         """
         pass

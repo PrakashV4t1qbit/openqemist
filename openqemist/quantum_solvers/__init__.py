@@ -1,5 +1,5 @@
 #   Copyright 2019 1QBit
-#   
+#
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
 #   You may obtain a copy of the License at
@@ -12,4 +12,5 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
+from .qiskit.qiskit_parametric_solver import QiskitParametricSolver
 from .microsoft_qsharp.microsoft_qsharp_parametric_solver import MicrosoftQSharpParametricSolver

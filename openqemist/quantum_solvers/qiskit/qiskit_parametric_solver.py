@@ -121,7 +121,6 @@ class QiskitParametricSolver(ParametricQuantumSolver):
         # Select ansatz, set the dimension of the amplitudes
         self.var_form = UCCSD(self.qubit_hamiltonian.num_qubits, depth=1,
                          num_orbitals=self.num_spin_orbitals, num_particles=self.num_particles,
-                         active_occupied=[], active_unoccupied=[],
                          initial_state=self.init_state, qubit_mapping=self.map_type,
                          two_qubit_reduction=False, num_time_slices=1)
 

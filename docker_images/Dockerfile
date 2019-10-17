@@ -28,7 +28,7 @@ ENV LD_PRELOAD=/usr/lib64/libopenblas.so
 
 # Python modules for documentation, Jupyter notebook support, visualization
 # and some computational packages
-RUN pip3 install 'ipython==7.4.0' jupyter 'pyscf==1.6' numpy 'scipy==1.2' \ 
+RUN pip3 install ipython jupyter pyscf numpy 'scipy==1.2' \ 
     setuptools wheel sphinx py3Dmol sphinx_rtd_theme nbsphinx
 
 
@@ -37,7 +37,7 @@ RUN pip3 install 'openfermion==0.9.0' openfermionprojectq
 
 
 ################### IBM Qiskit environment ######################
-RUN pip3 install 'qiskit==0.11.0'
+RUN pip3 install qiskit
 
 
 ################### Microsoft QDK environment ###################
@@ -52,11 +52,11 @@ RUN chown root:root /etc/yum.repos.d/microsoft-prod.repo
 RUN dnf install -y dotnet-sdk-2.2
 
 # Install the IQSharp backend
-RUN dotnet tool install -g Microsoft.Quantum.IQSharp --version 0.7.1905.3109
+RUN dotnet tool install -g Microsoft.Quantum.IQSharp
 RUN /root/.dotnet/tools/dotnet-iqsharp install --user
 
 # Install python package
-RUN pip3 install qsharp==0.7.1905.3109
+RUN pip3 install qsharp
 
 ########################### Finalize #############################
 

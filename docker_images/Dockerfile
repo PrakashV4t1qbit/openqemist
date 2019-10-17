@@ -15,12 +15,22 @@
 FROM fedora:28
 
 RUN dnf -y update
-RUN dnf -y install wget libgomp openblas-devel pandoc
+RUN dnf -y install wget libgomp openblas-devel pandoc which git
 RUN dnf clean all
 
-
 # Openfermion and ProjectQ installation dependencies
-RUN dnf -y install gcc redhat-rpm-config gcc-c++ python3-devel
+RUN dnf -y install gcc redhat-rpm-config gcc-c++ python3-devel cmake
+
+
+#RUN export CC="awoo"; echo $CC
+#RUN export CXX="awoo++"; echo $CXX
+ENV CC `which gcc`
+ENV CXX `which g++`
+RUN echo $CC $CXX
+
+
+RUN exit
+
 
 # We do this because pyscf refuses to link to the system OpenBLAS in the pip
 # install so we force load that version ahead of the one that it ships with.
@@ -28,11 +38,12 @@ ENV LD_PRELOAD=/usr/lib64/libopenblas.so
 
 # Python modules for documentation, Jupyter notebook support, visualization
 # and some computational packages
-RUN pip3 install ipython jupyter pyscf numpy 'scipy==1.2' \ 
-    setuptools wheel sphinx py3Dmol sphinx_rtd_theme nbsphinx
+RUN pip3 install ipython jupyter pyscf numpy 'scipy==1.2' pybind11 \
+    setuptools wheel sphinx py3Dmol sphinx_rtd_theme nbsphinx scikit-build
 
 
-################### Google Openfermion environment ##############
+################### Google Openfermion + projectQ environment ###
+RUN pip3 install projectq
 RUN pip3 install 'openfermion==0.9.0' openfermionprojectq
 
 

@@ -92,7 +92,7 @@ class QiskitParametricSolver(ParametricQuantumSolver):
         # Build two body integrals in Qiskit format
         eri = ao2mo.incore.full(mean_field._eri, mean_field.mo_coeff, compact=False)
         eri2 = eri.reshape(tuple([self.num_orbitals]*4))
-        self.two_body_integrals = QMolecule.twoe_to_spin(np.einsum('ijkl->ljik', eri2))
+        self.two_body_integrals = QMolecule.twoe_to_spin(eri2)
 
         # Build Hamiltonians
         # ------------------

@@ -15,7 +15,7 @@
 FROM fedora:28
 
 RUN dnf -y update
-RUN dnf -y install wget libgomp openblas-devel pandoc which git
+RUN dnf -y install wget libgomp openblas-devel pandoc
 RUN dnf clean all
 
 # Openfermion and ProjectQ installation dependencies
@@ -27,17 +27,17 @@ ENV LD_PRELOAD=/usr/lib64/libopenblas.so
 
 # Python modules for documentation, Jupyter notebook support, visualization
 # and some computational packages
-RUN pip3 install ipython jupyter pyscf numpy 'scipy==1.2' pybind11 \
+RUN pip3 install ipython jupyter 'pyscf==1.6' numpy 'scipy==1.2' pybind11 \
     setuptools wheel sphinx py3Dmol sphinx_rtd_theme nbsphinx scikit-build
 
 
 ################### Google Openfermion + projectQ environment ###
-RUN pip3 install projectq
+RUN pip3 install 'projectq==0.4'
 RUN pip3 install 'openfermion==0.9.0' openfermionprojectq
 
 
 ################### IBM Qiskit environment ######################
-RUN pip3 install qiskit
+RUN pip3 install 'qiskit==0.13'
 
 
 ################### Microsoft QDK environment ###################

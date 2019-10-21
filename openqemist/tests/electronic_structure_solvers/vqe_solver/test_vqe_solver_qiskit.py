@@ -45,6 +45,7 @@ class VQESolverTest(unittest.TestCase):
         energy = solver.simulate(mol)
         self.assertAlmostEqual(energy, -1.1372704178510415, delta=1e-3)
 
+    @unittest.skip("Pending faster implementation of get_rdm.")
     def test_h2_321g(self):
         """ Test the converged energy of VQE with initial variational parameters
             provided by the user """
@@ -67,7 +68,7 @@ class VQESolverTest(unittest.TestCase):
         energy = solver.simulate(mol)
         self.assertAlmostEqual(energy, -1.1478300615818977, delta=1e-3)
 
-    @unittest.skip("This test can take a while if we start with poor amplitudes (~10 mins)")
+    @unittest.skip("Pending faster implementation of get_rdm.")
     def test_h4_sto3g(self):
         """ Test the converged energy of VQE with initial variational parameters provided by the user """
 

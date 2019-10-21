@@ -271,7 +271,6 @@ class QiskitParametricSolver(ParametricQuantumSolver):
             list: Initial parameters.
         """
         if self.ansatz == self.__class__.Ansatze.UCCSD:
-            #TODO: IBM Qiskit has var_form.preferred_init_point for future consideration
-            return 1e-2 * np.ones(self.amplitude_dimension)
+            return self.var_form.preferred_init_points
         else:
             raise RuntimeError("Unsupported ansatz for automatic parameter generation")

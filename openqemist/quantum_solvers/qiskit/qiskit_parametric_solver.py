@@ -92,7 +92,7 @@ class QiskitParametricSolver(ParametricQuantumSolver):
         # Build two body integrals in Qiskit format
         eri = ao2mo.incore.full(mean_field._eri, mean_field.mo_coeff, compact=False)
         eri2 = eri.reshape(tuple([self.num_orbitals]*4))
-        self.two_body_integrals = QMolecule.twoe_to_spin(np.einsum('ijkl->ljik', eri2))
+        self.two_body_integrals = QMolecule.twoe_to_spin(eri2)
 
         # Build Hamiltonians
         # ------------------
@@ -121,7 +121,6 @@ class QiskitParametricSolver(ParametricQuantumSolver):
         # Select ansatz, set the dimension of the amplitudes
         self.var_form = UCCSD(self.qubit_hamiltonian.num_qubits, depth=1,
                          num_orbitals=self.num_spin_orbitals, num_particles=self.num_particles,
-                         active_occupied=[], active_unoccupied=[],
                          initial_state=self.init_state, qubit_mapping=self.map_type,
                          two_qubit_reduction=False, num_time_slices=1)
 
@@ -272,7 +271,6 @@ class QiskitParametricSolver(ParametricQuantumSolver):
             list: Initial parameters.
         """
         if self.ansatz == self.__class__.Ansatze.UCCSD:
-            #TODO: IBM Qiskit has var_form.preferred_init_point for future consideration
-            return 1e-2 * np.ones(self.amplitude_dimension)
+            return self.var_form.preferred_init_points
         else:
             raise RuntimeError("Unsupported ansatz for automatic parameter generation")

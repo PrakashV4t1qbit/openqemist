@@ -37,17 +37,17 @@ class VQESolver(ElectronicStructureSolver):
     Uses the VQE algorithm to solve the electronic structure problem. By default
     an optimizer from scipy is used, but users can set any function whose first
     argument is the `simulate` function of the hardware backend and the second
-    is the amplitudes to optimize over and returns a energy. See the
+    is the variational parameters to optimize over and returns a energy. See the
     implementation of `_default_optimizer` for a concrete example.
     Users should provide a hardware backend type that conforms to the interface
     of `openqemist.quantum_solver.ParametricQuantumSolver` that the `VQESolver`
     will construct and use. Users should also provide an ansatze type that is
     supported by the backend.
     Users can also provide a function that takes a `pyscf.gto.Mole` as its first
-    argument and `pyscf.scf.RHF` as is second and returns the inital amplitudes
-    for the variational optimization. The user is responsible for ensuring that
-    the dimension of the amplitudes vector is correct for the given molecule and
-    andsatz choice.
+    argument and `pyscf.scf.RHF` as is second and returns the inital variational
+    parameters for the variational optimization. The user is responsible for
+    ensuring that the dimension of the variational parameters vector is correct
+    for the given molecule and andsatz choice.
 
     Attributes:
         hardware_backend_type (subclass of ParametricQuantumSolver): A type for
@@ -141,7 +141,7 @@ class VQESolver(ElectronicStructureSolver):
 
         return self.hardware_backend.get_rdm()
 
-    def _default_optimizer(self, backend, amplitudes):
+    def _default_optimizer(self, backend, var_params):
         """Function that can be set as a default optimizer.
 
         Funciton that is used by the class as a default optimizer when user does
@@ -149,7 +149,7 @@ class VQESolver(ElectronicStructureSolver):
 
         Args:
             backend (ParametricSolver): The quantum solver.
-            amplitudes (list): The variational parameters (float64).
+            var_params(list): The variational parameters (float64).
 
         Returns:
             list: The new variational parameters (result.fun, float64).
@@ -157,12 +157,12 @@ class VQESolver(ElectronicStructureSolver):
 
         from scipy.optimize import minimize
 
-        result = minimize(backend, amplitudes, method='SLSQP',
+        result = minimize(backend, var_params, method='SLSQP',
                 options={'disp':True, 'maxiter':2000, 'eps':1e-5, 'ftol':1e-5})
 
         if self.verbose:
             print("\n\t\tOptimal UCCSD Singlet Energy: {}".format(result.fun))
-            print("\t\tOptimal UCCSD Singlet Amplitudes: {}".format(result.x))
+            print("\t\tOptimal UCCSD Singlet Variational Parameters: {}".format(result.x))
             print("\t\tNumber of Function Evaluations : ", result.nfev)
 
         return result.fun

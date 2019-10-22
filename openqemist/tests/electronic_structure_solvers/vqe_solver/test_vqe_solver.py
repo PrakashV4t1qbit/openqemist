@@ -49,7 +49,7 @@ class MockQuantumSolver(ParametricQuantumSolver):
         self.amplitude_dimension = None
         self.preferred_var_params = [0.]
 
-    def simulate(self, amplitudes):
+    def simulate(self, variational_parameters):
         return 3
 
     def get_rdm(self):

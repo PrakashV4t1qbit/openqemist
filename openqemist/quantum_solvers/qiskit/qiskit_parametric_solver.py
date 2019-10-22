@@ -118,20 +118,20 @@ class QiskitParametricSolver(ParametricQuantumSolver):
         self.init_state = HartreeFock(self.qubit_hamiltonian.num_qubits, self.num_spin_orbitals, self.num_particles,
                                  self.map_type, False)  # No qubit reduction
 
-        # Select ansatz, set the dimension of the amplitudes
+        # Select ansatz, set the dimension of the variational parameters
         self.var_form = UCCSD(self.qubit_hamiltonian.num_qubits, depth=1,
                          num_orbitals=self.num_spin_orbitals, num_particles=self.num_particles,
                          initial_state=self.init_state, qubit_mapping=self.map_type,
                          two_qubit_reduction=False, num_time_slices=1)
 
         self.amplitude_dimension = self.var_form._num_parameters
-        self.optimized_amplitudes = []
+        self.optimized_var_params = []
 
     def simulate(self, var_params):
-        """ Evaluate the parameterized circuit for the input amplitudes.
+        """ Evaluate the circuit parameterized with the variational parameters.
 
         Args:
-            var_params (list): The initial amplitudes (float64).
+            var_params (list): The initial variational parameters (float64).
         Returns:
             float64: The total energy (energy).
         Raise:
@@ -149,16 +149,16 @@ class QiskitParametricSolver(ParametricQuantumSolver):
 
         energy = results['eigvals'][0] + self.nuclear_repulsion_energy
 
-        # Save the amplitudes so we have the optimal ones for RDM calculation
-        self.optimized_amplitudes = var_params
+        # Save the parameters so we have the optimal ones for RDM calculation
+        self.optimized_var_params = var_params
 
         return energy
 
     def get_rdm(self):
-        """
-            Obtain the 1- and 2-RDM matrices for given variational parameters.
-            This makes sense for problem decomposition methods if these amplitudes are the ones
-            that minimizes energy.
+        """ Obtain the 1- and 2-RDM matrices for given variational parameters.
+
+        Used for problem decomposition methods when `self.optimized_var_params`
+        are the ones that minimize energy.
 
         Returns:
             (numpy.array, numpy.array): One & two-particle RDMs (rdm1_np & rdm2_np, float64).
@@ -166,7 +166,7 @@ class QiskitParametricSolver(ParametricQuantumSolver):
             RuntimeError: If no simulation has been run before calling this method.
         """
 
-        if len(self.optimized_amplitudes) == 0:
+        if len(self.optimized_var_params) == 0:
             raise RuntimeError('Cannot retrieve RDM because method "Simulate" needs to run first.')
 
         # Initialize RDM matrices and other work arrays
@@ -205,7 +205,7 @@ class QiskitParametricSolver(ParametricQuantumSolver):
                 tmp_qubitOp = tmp_ferOp.mapping(map_type=self.map_type, threshold=1e-8)
                 tmp_qubitOp.chop(10 ** -10)
                 self.qubit_hamiltonian = tmp_qubitOp
-                ene_temp = self.simulate(self.optimized_amplitudes) - self.nuclear_repulsion_energy
+                ene_temp = self.simulate(self.optimized_var_params) - self.nuclear_repulsion_energy
                 rdm_contribution += coeff * ene_temp
 
                 # Reset entries of tmp_h1
@@ -250,7 +250,7 @@ class QiskitParametricSolver(ParametricQuantumSolver):
                     continue
 
                 self.qubit_hamiltonian = tmp_qubitOp
-                ene_temp = self.simulate(self.optimized_amplitudes) - self.nuclear_repulsion_energy
+                ene_temp = self.simulate(self.optimized_var_params) - self.nuclear_repulsion_energy
                 rdm_contribution += coeff * ene_temp
 
                 # Reset entries of tmp_h2

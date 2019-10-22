@@ -24,8 +24,8 @@ class ParametricQuantumSolver(abc.ABC):
     can just accept an amplitude array and return an energy.
 
     Attributes:
-        amplitude_dimension (int): The size of the amplitudes list that should
-            be provided to the solver.
+        var_params_dimension (int): The size of the variational parameters list
+            that should be provided to the solver.
         initial_wavefunction (numpy.array): The initial wavefuntion for the
             simulations.
         n_qubits (int): The number of qubits in the circuit.
@@ -34,20 +34,21 @@ class ParametricQuantumSolver(abc.ABC):
     def __init__(self, molecule, anstatz, mean_field=None):
         self.initial_wavefunction = None
         self.n_qubits = None
-        self.amplitude_dimension = None
+        self.var_params_dimension = None
 
     @abc.abstractmethod
-    def simulate(self, amplitudes):
-        """Performs an energy simulation for the given amplitudes.
+    def simulate(self, var_params):
+        """Performs an energy simulation for the given variational parameters.
 
         Args:
-            amplitudes (list): The amplitudes to use in the simulation.
+            var_params(list): The variational parameters to use in the
+                        simulation.
 
         Returns:
             float: The energy from the simulation.
 
         Raises:
-            ValueError: If len(amplitudes) doesn't equal amplitude_dimension.
+            ValueError: If len(var_params) doesn't equal amplitude_dimension.
         """
         pass
 

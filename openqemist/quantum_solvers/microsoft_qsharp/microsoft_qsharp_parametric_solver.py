@@ -34,7 +34,7 @@ class MicrosoftQSharpParametricSolver(ParametricQuantumSolver):
 
     Attributes:
         n_samples (int): The number of samples to take from the hardware emulator.
-        optimized_amplitudes (list): The optimized amplitudes.
+        optimized_var_params(list): The optimized variational parameters.
         verbose(bool): Toggles the printing of debug statements.
     """
 
@@ -64,8 +64,8 @@ class MicrosoftQSharpParametricSolver(ParametricQuantumSolver):
         # Initialize the number of samples to be used by the MicrosoftQSharp backend
         self.n_samples = 1e18
 
-        # Initialize the amplitudes (parameters to be optimized)
-        self.optimized_amplitudes = []
+        # Initialize the parameters to be optimized
+        self.optimized_var_params = []
 
         # Obtain fragment info with PySCF
         # -----------------------------------------
@@ -155,13 +155,13 @@ class MicrosoftQSharpParametricSolver(ParametricQuantumSolver):
         self.energy_offset = self.jw_hamiltonian[3]
 
 
-    def simulate(self, amplitudes):
+    def simulate(self, var_params):
         """Perform the simulation for the molecule.
 
         If the mean field is not provided it is automatically calculated.
 
         Args:
-            amplitudes (list): The initial amplitudes (float64).
+            var_params (list): The variational parameters(float64).
 
         Returns:
             float64: The total energy (energy).
@@ -171,33 +171,32 @@ class MicrosoftQSharpParametricSolver(ParametricQuantumSolver):
         # Import the "EstimateEnergy" Q# operation from the QDK Chemistry library
         estimate_energy = qsharp.QSharpCallable("Microsoft.Quantum.Chemistry.JordanWigner.VQE.EstimateEnergy", "")
 
-        # Test if right number of amplitudes have been passed
-        if len(amplitudes) != self.amplitude_dimension:
+        # Test if right number of variational parameters have been passed
+        if len(var_params) != self.amplitude_dimension:
             raise ValueError("Incorrect dimension for amplitude list.")
 
-        amplitudes = list(amplitudes)
-        self.jw_hamiltonian = self._set_amplitudes(amplitudes, self.jw_hamiltonian)
+        var_params = list(var_params)
+        self.jw_hamiltonian = self._set_var_params(var_params, self.jw_hamiltonian)
 
         # Compute energy
         energy = estimate_energy.simulate(jwHamiltonian=self.jw_hamiltonian, nSamples=self.n_samples)
 
-        # Update optimal amplitudes
-        self.optimized_amplitudes = amplitudes
+        # Update optimal variational parameters
+        self.optimized_var_params = var_params
 
         return energy
 
 
     def get_rdm(self):
-        """Obtain the RDMs from the optimized amplitudes.
+        """Obtain the RDMs from the optimized variational parameters.
 
-        Obtain the RDMs from the optimized amplitudes by using the
-        same function for energy evaluation.
-        The RDMs are computed by using each fermionic Hamiltonian term,
-        transforming them and computing the elements one-by-one.
-        Note that the Hamiltonian coefficients will not be multiplied
-        as in the energy evaluation.
-        The first element of the Hamiltonian is the nuclear repulsion
-        energy term, not the Hamiltonian term.
+        Obtain the RDMs from the optimized variational parameters by using the
+        same function for energy evaluation.  The RDMs are computed by using
+        each fermionic Hamiltonian term, transforming them and computing the
+        elements one-by-one.
+        Note that the Hamiltonian coefficients will not be multiplied as in the
+        energy evaluation. The first element of the Hamiltonian is the nuclear
+        repulsion energy term, not the Hamiltonian term.
 
         Returns:
             (numpy.array, numpy.array): One & two-particle RDMs (rdm1_np & rdm2_np, float64).
@@ -205,7 +204,7 @@ class MicrosoftQSharpParametricSolver(ParametricQuantumSolver):
         import qsharp
         import qsharp.chemistry as qsharpchem
 
-        amplitudes = self.optimized_amplitudes
+        amplitudes = self.optimized_var_params
         one_rdm = np.zeros((self.n_orbitals, self.n_orbitals))
         two_rdm = np.zeros((self.n_orbitals, self.n_orbitals, self.n_orbitals, self.n_orbitals))
 
@@ -288,14 +287,14 @@ class MicrosoftQSharpParametricSolver(ParametricQuantumSolver):
         else:
             raise RuntimeError("Unsupported ansatz for automatic parameter generation")
 
-    def _set_amplitudes(self, amplitudes, jw_hamiltonian):
+    def _set_var_params(self, var_params, jw_hamiltonian):
         """ Update variational parameters stored in the Q# JW data-structure """
         # Unpack data-structure
         a1, a2, input_state, a3 = jw_hamiltonian
         b1, operator = input_state
 
         # Update the cluster operator with the new variational parameters
-        ref, new_operator = compute_cluster_operator(self.n_qubits, self.n_electrons, amplitudes, True, operator)
+        ref, new_operator = compute_cluster_operator(self.n_qubits, self.n_electrons, var_params, True, operator)
 
 	# Re-pack the data-structure
         input_state = (b1, new_operator)

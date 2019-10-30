@@ -10,6 +10,7 @@ Welcome to the 1QBit OpenQEMIST documentation!
    dmet_microsoft_qsharp
    vqe_microsoft_qsharp
    dmet_multisolver
+   qiskit_example
    release_notes
 
 

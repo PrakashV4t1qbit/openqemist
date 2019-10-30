@@ -17,10 +17,23 @@ help:
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
 %: Makefile
 	@sphinx-apidoc  -o refman/ .. ../setup.py ../qemist/tests/ ../benchmarks
-	#@jupyter nbconvert --ExecutePreprocessor.timeout=600 --execute --to rst ../examples/dmet_microsoft_qsharp.ipynb
-	#@mv ../examples/dmet_microsoft_qsharp.rst .
-	#@jupyter nbconvert --ExecutePreprocessor.timeout=600 --execute --to rst ../examples/vqe_microsoft_qsharp.ipynb
-	#@mv ../examples/vqe_microsoft_qsharp.rst .
+	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+
+multisolver_notebook:
 	@jupyter nbconvert --ExecutePreprocessor.timeout=6000 --execute --to rst ../examples/dmet_multisolver.ipynb
 	@mv ../examples/dmet_multisolver.rst .
-	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+
+dmet_notebook:
+	@jupyter nbconvert --ExecutePreprocessor.timeout=6000 --execute --to rst ../examples/dmet_microsoft_qsharp.ipynb
+	@mv ../examples/dmet_microsoft_qsharp.rst .
+
+vqe_notebook:
+	@jupyter nbconvert --ExecutePreprocessor.timeout=6000 --execute --to rst ../examples/vqe_microsoft_qsharp.ipynb
+	@mv ../examples/vqe_microsoft_qsharp.rst .
+
+qiskit_notebook:
+	@jupyter nbconvert --ExecutePreprocessor.timeout=6000 --execute --to rst ../examples/qiskit_example.ipynb
+	@mv ../examples/qiskit_example.rst .
+
+notebooks: multisolver_notebook dmet_notebook vqe_notebook qiskit_notebook
+

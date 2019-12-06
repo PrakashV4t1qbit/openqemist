@@ -52,11 +52,11 @@ RUN chown root:root /etc/yum.repos.d/microsoft-prod.repo
 RUN dnf install -y dotnet-sdk-2.2
 
 # Install the IQSharp backend
-RUN dotnet tool install -g Microsoft.Quantum.IQSharp
+RUN dotnet tool install -g Microsoft.Quantum.IQSharp --version 0.7.1905.3109
 RUN /root/.dotnet/tools/dotnet-iqsharp install --user
 
 # Install python package
-RUN pip3 install qsharp
+RUN pip3 install qsharp==0.7.1905.3109
 
 ########################### Finalize #############################
 

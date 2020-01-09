@@ -143,7 +143,7 @@ class QiskitParametricSolver(ParametricQuantumSolver):
         # Use the Qiskit VQE class to perform a single energy evaluation
         from qiskit.aqua.components.optimizers import COBYLA
         cobyla = COBYLA(maxiter=0)
-        vqe = VQE(self.qubit_hamiltonian, self.var_form, cobyla, self.backend_opt[1], initial_point=var_params)
+        vqe = VQE(self.qubit_hamiltonian, self.var_form, cobyla, initial_point=var_params)
         quantum_instance = QuantumInstance(backend=self.backend, shots=1000000)
         results = vqe.run(quantum_instance)
 
@@ -151,7 +151,7 @@ class QiskitParametricSolver(ParametricQuantumSolver):
 
         # Save the amplitudes so we have the optimal ones for RDM calculation
         self.optimized_amplitudes = var_params
-
+        
         return energy
 
     def get_rdm(self):
@@ -204,6 +204,9 @@ class QiskitParametricSolver(ParametricQuantumSolver):
                 tmp_ferOp = FermionicOperator(h1=tmp_h1, h2=tmp_h2)
                 tmp_qubitOp = tmp_ferOp.mapping(map_type=self.map_type, threshold=1e-8)
                 tmp_qubitOp.chop(10 ** -10)
+                if tmp_qubitOp.num_qubits == 0:
+                    continue
+                
                 self.qubit_hamiltonian = tmp_qubitOp
                 ene_temp = self.simulate(self.optimized_amplitudes) - self.nuclear_repulsion_energy
                 rdm_contribution += coeff * ene_temp

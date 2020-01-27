@@ -24,3 +24,7 @@ Release Notes
   function of the hardware backend if the `initial_var_parameters` are not
   specified. The only way to specify custom values for the intial variational
   parameters is through the `initial_var_parameters` attribute.
+
+- `ParametricQuantumSolver` objects constructors now take an optional dictionary
+  mapping strings to values. This can be passed from the VQE caller to further
+  configure the hardware backend.

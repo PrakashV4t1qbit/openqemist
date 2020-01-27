@@ -43,7 +43,7 @@ class MockQuantumSolver(ParametricQuantumSolver):
     class Ansatze(Enum):
         UCCSD = 0
 
-    def __init__(self, ansatz, molecule, mean_field=None):
+    def __init__(self, ansatz, molecule, mean_field=None, backend_parameters={}):
         self.initial_wavefunction = None
         self.n_qubits = None
         self.amplitude_dimension = None

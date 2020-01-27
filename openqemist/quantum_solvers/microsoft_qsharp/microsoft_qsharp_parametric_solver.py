@@ -44,7 +44,7 @@ class MicrosoftQSharpParametricSolver(ParametricQuantumSolver):
         """ Enumeration of the ansatz circuits that are supported."""
         UCCSD = 0
 
-    def __init__(self, ansatz, molecule, mean_field = None):
+    def __init__(self, ansatz, molecule, mean_field=None, backend_options=None):
         """Initialize the settings for simulation.
 
         If the mean field is not provided it is automatically calculated.
@@ -53,6 +53,8 @@ class MicrosoftQSharpParametricSolver(ParametricQuantumSolver):
             ansatz (OpenFermionParametricSolver.Ansatze): Ansatz for the quantum solver.
             molecule (pyscf.gto.Mole): The molecule to simulate.
             mean_field (pyscf.scf.RHF): The mean field of the molecule.
+            backend_options (dict): Extra parameters that control the behaviour
+                of the solver.
         """
         # Import python packages for Microsoft Python interops
         import qsharp

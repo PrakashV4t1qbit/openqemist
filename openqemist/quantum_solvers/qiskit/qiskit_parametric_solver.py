@@ -46,7 +46,7 @@ class QiskitParametricSolver(ParametricQuantumSolver):
         """ Enumeration of the ansatz circuits that are supported."""
         UCCSD = 0
 
-    def __init__(self, ansatz, molecule, mean_field=None):
+    def __init__(self, ansatz, molecule, mean_field=None, backend_options=None):
         """Initialize the settings for simulation.
         If the mean field is not provided it is automatically calculated.
 
@@ -54,6 +54,8 @@ class QiskitParametricSolver(ParametricQuantumSolver):
             ansatz (QiskitParametricSolver.Ansatze): Ansatz for the quantum solver.
             molecule (pyscf.gto.Mole): The molecule to simulate.
             mean_field (pyscf.scf.RHF): The mean field of the molecule.
+            backend_options (dict): Extra parameters that control the behaviour
+                of the solver.
         """
 
         # Check the ansatz
@@ -151,7 +153,7 @@ class QiskitParametricSolver(ParametricQuantumSolver):
 
         # Save the amplitudes so we have the optimal ones for RDM calculation
         self.optimized_amplitudes = var_params
-        
+
         return energy
 
     def get_rdm(self):
@@ -206,7 +208,6 @@ class QiskitParametricSolver(ParametricQuantumSolver):
                 tmp_qubitOp.chop(10 ** -10)
                 if tmp_qubitOp.num_qubits == 0:
                     continue
-                
                 self.qubit_hamiltonian = tmp_qubitOp
                 ene_temp = self.simulate(self.optimized_amplitudes) - self.nuclear_repulsion_energy
                 rdm_contribution += coeff * ene_temp

@@ -51,7 +51,6 @@ class RigettiParametricSolver(ParametricQuantumSolver):
         of_mole (openfermion.hamiltonian.MolecularData): Molecular Data in Openfermion.
         f_hamiltonian (openfermion.ops.InteractionOperator): Fermionic Hamiltonian.
         qubit_hamiltonian (openfermion.transforms.jordan_wigner): Qubit Hamiltonian.
-        compiler_engine (openfermionprojectq.uccsd_trotter_engine): projectq.cengine.
         n_qubits (int): Number of qubits.
     """
 

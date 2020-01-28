@@ -58,6 +58,8 @@ class VQESolver(ElectronicStructureSolver):
         initial_var_params (list): Initial values of the variational parameters
             used in the classical optimization process
         verbose (boolean): Controls the verbosity of the default optimizer.
+        backend_parameters (dict): Extra parameters that can be forwarded to the
+            parametric quantum solver.
     Note:
         Initial variational parameters can be specified through the
         `initial_var_params` argument. If this is not specified, then the
@@ -72,6 +74,8 @@ class VQESolver(ElectronicStructureSolver):
         self.ansatz_type = None
         self.optimizer = None
         self.initial_var_params = None
+        self.backend_parameters = {}
+
 
     def simulate(self, molecule, mean_field=None):
         """Perform the simulation for the molecule.
@@ -102,7 +106,8 @@ class VQESolver(ElectronicStructureSolver):
 
         # Instantiate the quantum solver backend
         # It knows what ansatz has been picked and computed preferred values for its parameters
-        self.hardware_backend = self.hardware_backend_type(self.ansatz_type, molecule, mean_field)
+        self.hardware_backend = self.hardware_backend_type(self.ansatz_type,
+                molecule, mean_field, self.backend_parameters)
 
         # The user can provide their own initial variational parameters, otherwise the preferred ones
         # computed by the underlying quantum solver will be used as initial values

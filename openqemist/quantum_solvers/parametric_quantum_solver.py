@@ -31,7 +31,7 @@ class ParametricQuantumSolver(abc.ABC):
         n_qubits (int): The number of qubits in the circuit.
     """
 
-    def __init__(self, molecule, anstatz, mean_field=None):
+    def __init__(self, molecule, anstatz, mean_field=None, backend_options=None):
         self.initial_wavefunction = None
         self.n_qubits = None
         self.amplitude_dimension = None

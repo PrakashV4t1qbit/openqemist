@@ -41,7 +41,6 @@ class VQESolverTest(unittest.TestCase):
         solver = VQESolver()
         solver.hardware_backend_type = MicrosoftQSharpParametricSolver
         solver.ansatz_type = MicrosoftQSharpParametricSolver.Ansatze.UCCSD
-        #solver.optimizer =
 
         energy = solver.simulate(mol)
         self.assertAlmostEqual(energy, -1.1372704178510415, delta=1e-3)

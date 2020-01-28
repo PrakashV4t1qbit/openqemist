@@ -47,9 +47,6 @@ WORKDIR /tmp/
 RUN dnf clean all
 RUN rpm --import https://packages.microsoft.com/keys/microsoft.asc
 RUN wget -q -O /etc/yum.repos.d/microsoft-prod.repo https://packages.microsoft.com/config/fedora/30/prod.repo
-#RUN wget -q https://packages.microsoft.com/config/fedora/27/prod.repo
-#RUN mv prod.repo /etc/yum.repos.d/microsoft-prod.repo
-#RUN chown root:root /etc/yum.repos.d/microsoft-prod.repo
 RUN dnf install -y dotnet-sdk-3.0
 
 # Install the IQSharp backend
@@ -61,17 +58,7 @@ RUN pip3 install qsharp
 
 
 ########################### Rigetti ##############################
-RUN pip3 install pyquil
-
-# Install our forked version of forest-openfermion
-RUN dnf -y install git
-WORKDIR /root/
-RUN git clone https://github.com/1QB-Information-Technologies/forest-openfermion.git
-WORKDIR /root/forest-openfermion/
-RUN git pull
-RUN git checkout scipy_version
-RUN pip3 install -e .
-WORKDIR /root/
+RUN pip3 install pyquil forestopenfermion
 
 ADD forest_config /root/.forest_config
 

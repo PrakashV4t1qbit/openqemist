@@ -26,6 +26,8 @@ consult our main [product page](https://1qbit.com/qemist).
 To get started, install the package, then see the [Jupyter notebooks](https://github.com/1QB-Information-Technologies/openqemist/tree/master/examples)
 for example usage.
 
+To use the Microsoft QDK integration follow the [instructions here](https://docs.microsoft.com/en-us/quantum/install-guide/?view=qsharp-preview).
+
 ## Architechture of OpenQEMIST
 OpenQEMIST is organized into three layers: problem decomposition, electronic
 structure solvers, and hardware backends. The problem decomposition layer is

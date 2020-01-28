@@ -12,10 +12,24 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-#!/bin/bash
+version: '3'
 
-cd $TRAVIS_BUILD_DIR/docker_images
+services:
+  qemist:
+    build: ./qemist/
+    ports:
+        - "8888:8888"
+    volumes:
+        - ../:/root/openqemist
+    command: bash -c "while true; do sleep 1; done"
+    container_name: qemist_test_container
 
-docker-compose up --build -d
+  rigetti_qvm:
+    image: rigetti/qvm
+    # We have to override the default start mode of the QVM
+    entrypoint: ./qvm -S
 
-docker exec -it qemist_test_container bash /root/openqemist/cont_integration/run_test.sh
+  rigetti_quilc:
+    image: rigetti/quilc
+    # We have to override the default start mode of the QVM
+    entrypoint: ./quilc -S

@@ -33,7 +33,7 @@ RUN pip3 install ipython jupyter 'pyscf==1.6' numpy 'scipy==1.2' pybind11 \
 
 ################### Google Openfermion + projectQ environment ###
 RUN pip3 install 'projectq==0.4'
-RUN pip3 install 'openfermion==0.9.0' openfermionprojectq
+RUN pip3 install 'openfermion==0.10.0' openfermionprojectq
 
 
 ################### IBM Qiskit environment ######################
@@ -41,6 +41,7 @@ RUN pip3 install 'qiskit==0.13'
 
 
 ################### Microsoft QDK environment ###################
+
 # Install QDK
 WORKDIR /tmp/
 RUN dnf clean all
@@ -58,8 +59,25 @@ RUN /root/.dotnet/tools/dotnet-iqsharp install --user
 # Install python package
 RUN pip3 install qsharp
 
+
+########################### Rigetti ##############################
+RUN pip3 install pyquil
+
+# Install our forked version of forest-openfermion
+RUN dnf -y install git
+WORKDIR /root/
+RUN git clone https://github.com/1QB-Information-Technologies/forest-openfermion.git
+WORKDIR /root/forest-openfermion/
+RUN git pull
+RUN git checkout scipy_version
+RUN pip3 install -e .
+WORKDIR /root/
+
+ADD forest_config /root/.forest_config
+
 ########################### Finalize #############################
-# Set the python path to find OpenQEMIST
+
+# Set the python path to find QEMIST
 ENV PYTHONPATH=$PYTHONPATH:/root/openqemist
 
 # TODO: Numerical precision unreliable without this.

@@ -1,0 +1,7 @@
+pyscf==1.6 
+numpy
+scipy
+qsharp 
+qiskit==0.13
+pyquil
+forestopenfermion
